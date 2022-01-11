@@ -1,7 +1,12 @@
-﻿using System.Linq;
-using System.Text;
+﻿using QRCoder;
+using System;
+using Windows.Foundation;
+using Windows.Storage.Streams;
+using Windows.UI.Popups;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -12,16 +17,16 @@ namespace DressOfShadows
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        //private Blowfish DressOfShadowsBlackBox;
-        private string Global_Compare;
-        private string TextoCodigo;
-        private string TextoEntrada;
-        private string TextoSalida;
+        private string TextoCodigo = "";
+        private string TextoEntrada = "";
+        private string TextoSalida = "";
         private DressOfShadowsCripto OperacionCripto;
 
         public MainPage()
         {
             InitializeComponent();
+            ApplicationView.PreferredLaunchViewSize = new Size(720, 510);
+            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
         }
 
         // Muestra Password
@@ -42,45 +47,84 @@ namespace DressOfShadows
         }
 
         // Encriptar Mensaje
-        private void ClickEncriptar(object sender, RoutedEventArgs e)
+        private async void ClickEncriptar(object sender, RoutedEventArgs e)
         {
             // Prepararar Black Box
             OperacionCripto = new();
+
             // Verificar Claves Existentes
-            if (TBoxClaveEntrada.Password.Trim().Length > 0)
-            {
-                TextoCodigo = TBoxClaveEntrada.Password.Trim();
-            }
+            TextoCodigo = TBoxClaveEntrada.Password.Trim().Length > 0 ? TBoxClaveEntrada.Password.Trim() : "";
 
             // Verificar Texto existente
-            if (TBoxMensajeEntrada.Text.Trim().Length > 0)
+            TextoEntrada = TBoxMensajeEntrada.Text.Trim().Length > 0 ? TBoxMensajeEntrada.Text.Trim() : "";
+
+            if ((bool)ChBoxAES.IsChecked)
             {
-                TextoEntrada = TBoxMensajeEntrada.Text.Trim();
+                TextoSalida = OperacionCripto.AESEncrypt(TextoEntrada, TextoCodigo);
+            }
+            else if ((bool)ChBoxBlowFish.IsChecked)
+            {
+                TextoSalida = OperacionCripto.BlowfishEncrypt(TextoEntrada, TextoCodigo);
+            }
+            else if ((bool)ChBoxElGamal.IsChecked)
+            {
+                TextoSalida = OperacionCripto.ElGamalEncrypt(TextoEntrada, TextoCodigo);
+            }
+            else if ((bool)ChBoxTwoFish.IsChecked)
+            {
+                TextoSalida = OperacionCripto.TwofishEncrypt(TextoEntrada, TextoCodigo);
+            }
+            else
+            {
+                MessageDialog LvrMessageDialog = new("Debe escojer una función criptográfica.");
+                _ = await LvrMessageDialog.ShowAsync();
+                return;
             }
 
-            TextoSalida = OperacionCripto.Encriptar(TextoCodigo, TextoEntrada);
-            
-            TBoxMensajeSalida.Text = TextoSalida;
+            if (OperacionCripto.ErrorDeRetorno == "")
+            {
+                TBoxMensajeSalida.Text = TextoSalida;
+            }
+            else
+            {
+                MessageDialog LvrMessageDialog = new(OperacionCripto.ErrorDeRetorno);
+                _ = await LvrMessageDialog.ShowAsync();
+            }
         }
 
-        private void ClickDesEncriptar(object sender, RoutedEventArgs e)
+        private async void ClickDesEncriptar(object sender, RoutedEventArgs e)
         {
             // Prepararar Black Box
             OperacionCripto = new();
 
             // Verificar Claves Existentes
-            if (TBoxClaveEntrada.Password.Trim().Length > 0)
-            {
-                TextoCodigo = TBoxClaveEntrada.Password.Trim();
-            }
+            TextoCodigo = TBoxClaveEntrada.Password.Trim().Length > 0 ? TBoxClaveEntrada.Password.Trim() : "";
 
             // Verificar Texto existente
-            if (TBoxMensajeSalida.Text.Trim().Length > 0)
-            {
-                TextoSalida = TBoxMensajeSalida.Text.Trim();
-            }
+            TextoSalida = TBoxMensajeSalida.Text.Trim().Length > 0 ? TBoxMensajeSalida.Text.Trim() : "";
 
-            TextoEntrada = OperacionCripto.DesEncriptar(TextoCodigo, TextoSalida);
+            if ((bool)ChBoxAES.IsChecked)
+            {
+                TextoEntrada = OperacionCripto.AESDecrypt(TextoSalida, TextoCodigo);
+            }
+            else if ((bool)ChBoxBlowFish.IsChecked)
+            {
+                TextoEntrada = OperacionCripto.BlowfishDecrypt(TextoSalida, TextoCodigo);
+            }
+            else if ((bool)ChBoxElGamal.IsChecked)
+            {
+                TextoEntrada = OperacionCripto.ElGamalDecrypt(TextoSalida, TextoCodigo);
+            }
+            else if ((bool)ChBoxTwoFish.IsChecked)
+            {
+                TextoEntrada = OperacionCripto.TwofishDecrypt(TextoSalida, TextoCodigo);
+            }
+            else
+            {
+                MessageDialog LvrMessageDialog = new("Debe escojer una función criptográfica.");
+                _ = await LvrMessageDialog.ShowAsync();
+                return;
+            }
 
             TBoxMensajeEntrada.Text = TextoEntrada;
         }
@@ -91,5 +135,58 @@ namespace DressOfShadows
             Application.Current.Exit();
         }
 
+        private async void ClickBtnVerQR(object sender, RoutedEventArgs e)
+        {
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(TextoSalida, QRCodeGenerator.ECCLevel.Q);
+            PngByteQRCode qrCode = new(qrCodeData);
+
+            byte[] qrCodeAsPngByteArr = qrCode.GetGraphic(20);
+
+            InMemoryRandomAccessStream stream = new();
+
+            DataWriter writer = new DataWriter(stream.GetOutputStreamAt(0));
+            writer.WriteBytes(qrCodeAsPngByteArr);
+            await writer.StoreAsync();
+            var image = new BitmapImage();
+            await image.SetSourceAsync(stream);
+
+            imagenQRMensaje.Source = image;
+        }
+
+        private void AsignarMotorCripto(object sender, RoutedEventArgs e)
+        {
+            CheckBox CualChequeado = new();
+
+            CualChequeado = (CheckBox)sender;
+
+            switch ((string)CualChequeado.Content)
+            {
+                case "AES":
+                    ChBoxAES.IsChecked = true;
+                    ChBoxBlowFish.IsChecked = false;
+                    ChBoxElGamal.IsChecked = false;
+                    ChBoxTwoFish.IsChecked = false;
+                    break;
+                case "BlowFish":
+                    ChBoxAES.IsChecked = false;
+                    ChBoxBlowFish.IsChecked = true;
+                    ChBoxElGamal.IsChecked = false;
+                    ChBoxTwoFish.IsChecked = false;
+                    break;
+                case "ElGamal":
+                    ChBoxAES.IsChecked = false;
+                    ChBoxBlowFish.IsChecked = false;
+                    ChBoxElGamal.IsChecked = true;
+                    ChBoxTwoFish.IsChecked = false;
+                    break;
+                case "TwoFish":
+                    ChBoxAES.IsChecked = false;
+                    ChBoxBlowFish.IsChecked = false;
+                    ChBoxElGamal.IsChecked = false;
+                    ChBoxTwoFish.IsChecked = true;
+                    break;
+            }
+        }
     }
 }

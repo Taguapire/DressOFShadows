@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace DressOfShadows
@@ -22,14 +14,15 @@ namespace DressOfShadows
     /// </summary>
     sealed partial class App : Application
     {
+        private readonly double minW = 700, minH = 500;
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
-            this.Suspending += OnSuspending;
+            InitializeComponent();
+            Suspending += OnSuspending;
         }
 
         /// <summary>
@@ -41,8 +34,10 @@ namespace DressOfShadows
         {
             Frame rootFrame = Window.Current.Content as Frame;
 
+            
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
+
             if (rootFrame == null)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
@@ -66,7 +61,7 @@ namespace DressOfShadows
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    _ = rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();
@@ -78,7 +73,7 @@ namespace DressOfShadows
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
@@ -92,9 +87,43 @@ namespace DressOfShadows
         /// <param name="e">Details about the suspend request.</param>
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
-            var deferral = e.SuspendingOperation.GetDeferral();
+            SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        protected override void OnWindowCreated(WindowCreatedEventArgs args)
+        {
+            _ = SetWindowMinSize(new Size(args.Window.Bounds.Width, args.Window.Bounds.Height));
+            args.Window.CoreWindow.SizeChanged += CoreWindow_SizeChanged;
+            base.OnWindowCreated(args);
+        }
+
+        private void CoreWindow_SizeChanged(Windows.UI.Core.CoreWindow sender, Windows.UI.Core.WindowSizeChangedEventArgs args)
+        {
+            if (SetWindowMinSize(args.Size))
+            {
+                sender.ReleasePointerCapture();
+            }
+        }
+
+        private bool SetWindowMinSize(Size size)
+        {
+            if (size.Width < minW || size.Height < minH)
+            {
+                if (size.Width < minW)
+                {
+                    size.Width = minW;
+                }
+
+                if (size.Height < minH)
+                {
+                    size.Height = minH;
+                }
+
+                return ApplicationView.GetForCurrentView().TryResizeView(size);
+            }
+            return false;
         }
     }
 }
