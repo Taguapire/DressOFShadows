@@ -185,13 +185,7 @@ namespace DressOfShadows
                 return "";
             }
 
-            if (key.Length <= KEY448BIT)
-            {
-                for (int i = key.Length; i < KEY448BIT; i++)
-                {
-                    key += "*";
-                }
-            }
+            string KeyGenerada = GenerarPassword448(key);
 
             try
             {
@@ -199,7 +193,7 @@ namespace DressOfShadows
 
                 PaddedBufferedBlockCipher cipher = new(engine);
 
-                KeyParameter keyBytes = new(Encoding.GetBytes(key));
+                KeyParameter keyBytes = new(Encoding.GetBytes(KeyGenerada));
 
                 cipher.Init(true, keyBytes);
 
@@ -239,13 +233,7 @@ namespace DressOfShadows
                 return "";
             }
 
-            if (keyString.Length <= KEY448BIT)
-            {
-                for (int i = keyString.Length; i < KEY448BIT; i++)
-                {
-                    keyString += "*";
-                }
-            }
+            string KeyGenerada = GenerarPassword448(keyString);
 
             BlowfishEngine engine = new();
 
@@ -255,7 +243,7 @@ namespace DressOfShadows
 
             try
             {
-                cipher.Init(false, new KeyParameter(Encoding.GetBytes(keyString)));
+                cipher.Init(false, new KeyParameter(Encoding.GetBytes(KeyGenerada)));
             }
             catch (IndexOutOfRangeException)
             {
@@ -593,8 +581,10 @@ namespace DressOfShadows
         private string GenerarPassword256(string pPassword)
         {
             char separator = ',';
-            byte[] LvSalt = new byte[8];
-            Argon2Config config = new Argon2Config
+
+            byte[] LvSalt = new byte[8] { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+            Argon2Config config = new()
             {
                 Type = Argon2Type.DataIndependentAddressing,
                 Version = Argon2Version.Nineteen,
@@ -607,6 +597,41 @@ namespace DressOfShadows
                 //Secret = secret, // from somewhere
                 //AssociatedData = associatedData, // from somewhere
                 HashLength = 13 // >= 4
+            };
+
+            Argon2 argon2A = new(config);
+
+            string hashString;
+
+            using (SecureArray<byte> hashA = argon2A.Hash())
+            {
+                hashString = config.EncodeString(hashA.Buffer);
+            }
+
+            string[] divisor = hashString.Split(separator);
+
+            return divisor[2].Substring(2);
+        }
+
+        private string GenerarPassword448(string pPassword)
+        {
+            char separator = ',';
+
+            byte[] LvSalt = new byte[8] { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+            Argon2Config config = new()
+            {
+                Type = Argon2Type.DataIndependentAddressing,
+                Version = Argon2Version.Nineteen,
+                TimeCost = 10,
+                MemoryCost = 32768,
+                Lanes = 5,
+                Threads = Environment.ProcessorCount, // higher than "Lanes" doesn't help (or hurt)
+                Password = Encoding.ASCII.GetBytes(pPassword),
+                Salt = LvSalt, // >= 8 bytes if not null
+                //Secret = secret, // from somewhere
+                //AssociatedData = associatedData, // from somewhere
+                HashLength = 31 // >= 4
             };
 
             Argon2 argon2A = new(config);
