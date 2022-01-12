@@ -17,9 +17,9 @@
         <Button x:Name="BtnVerPassword" Content="Ver" Margin="565,48,0,0" VerticalAlignment="Top" Width="90" Click="ClibkBtnVerPassword" TabIndex="2" BorderBrush="#FF210404"/>
         <Image x:Name="imagenQRMensaje" HorizontalAlignment="Left" Height="150" Margin="505,210,0,0" VerticalAlignment="Top" Width="150"/>
         <Button x:Name="BtnVerQR" Content="Ver QR" Margin="385,431,0,0" VerticalAlignment="Top" Width="100" Click="ClickBtnVerQR" BorderBrush="#FF210404" Background="#33406178"/>
-        <CheckBox x:Name="ChBoxAES" Content="AES" Margin="55,378,0,0" VerticalAlignment="Top" FlowDirection="LeftToRight" MinWidth="100" VerticalContentAlignment="Center" Checked="AsignarMotorCripto"/>
-        <CheckBox x:Name="ChBoxBlowFish" Content="BlowFish" Margin="215,378,0,0" VerticalAlignment="Top" FlowDirection="LeftToRight" RenderTransformOrigin="0.5,0.531" MinWidth="100" VerticalContentAlignment="Center" Checked="AsignarMotorCripto"/>
-        <CheckBox x:Name="ChBoxElGamal" Content="ElGamal" Margin="385,378,0,0" VerticalAlignment="Top" FlowDirection="LeftToRight" MinWidth="100" VerticalContentAlignment="Center" Checked="AsignarMotorCripto"/>
-        <CheckBox x:Name="ChBoxTwoFish" Content="TwoFish" Margin="555,378,0,0" VerticalAlignment="Top" Width="95" FlowDirection="LeftToRight" MinWidth="100" VerticalContentAlignment="Center" Checked="AsignarMotorCripto"/>
+        <CheckBox x:Name="ChBoxAES" Content="AES" Margin="55,378,0,0" VerticalAlignment="Top" FlowDirection="LeftToRight" MinWidth="100" VerticalContentAlignment="Center" Click="AsignarMotorCripto"/>
+        <CheckBox x:Name="ChBoxBlowFish" Content="BlowFish" Margin="215,378,0,0" VerticalAlignment="Top" FlowDirection="LeftToRight" RenderTransformOrigin="0.5,0.531" MinWidth="100" VerticalContentAlignment="Center" Click="AsignarMotorCripto"/>
+        <CheckBox x:Name="ChBoxRijndael" Content="Rijndael" Margin="385,378,0,0" VerticalAlignment="Top" FlowDirection="LeftToRight" MinWidth="100" VerticalContentAlignment="Center" Click="AsignarMotorCripto"/>
+        <CheckBox x:Name="ChBoxTwoFish" Content="TwoFish" Margin="555,378,0,0" VerticalAlignment="Top" Width="95" FlowDirection="LeftToRight" MinWidth="100" VerticalContentAlignment="Center" Click="AsignarMotorCripto"/>
     </Grid>
 </Page>

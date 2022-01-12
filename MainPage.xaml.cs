@@ -66,9 +66,9 @@ namespace DressOfShadows
             {
                 TextoSalida = OperacionCripto.BlowfishEncrypt(TextoEntrada, TextoCodigo);
             }
-            else if ((bool)ChBoxElGamal.IsChecked)
+            else if ((bool)ChBoxRijndael.IsChecked)
             {
-                TextoSalida = OperacionCripto.ElGamalEncrypt(TextoEntrada, TextoCodigo);
+                TextoSalida = OperacionCripto.RijndaelEncrypt(TextoEntrada, TextoCodigo);
             }
             else if ((bool)ChBoxTwoFish.IsChecked)
             {
@@ -111,9 +111,9 @@ namespace DressOfShadows
             {
                 TextoEntrada = OperacionCripto.BlowfishDecrypt(TextoSalida, TextoCodigo);
             }
-            else if ((bool)ChBoxElGamal.IsChecked)
+            else if ((bool)ChBoxRijndael.IsChecked)
             {
-                TextoEntrada = OperacionCripto.ElGamalDecrypt(TextoSalida, TextoCodigo);
+                TextoEntrada = OperacionCripto.RijndaelDecrypt(TextoSalida, TextoCodigo);
             }
             else if ((bool)ChBoxTwoFish.IsChecked)
             {
@@ -126,7 +126,15 @@ namespace DressOfShadows
                 return;
             }
 
-            TBoxMensajeEntrada.Text = TextoEntrada;
+            if (OperacionCripto.ErrorDeRetorno == "")
+            {
+                TBoxMensajeEntrada.Text = TextoEntrada;
+            }
+            else
+            {
+                MessageDialog LvrMessageDialog = new(OperacionCripto.ErrorDeRetorno);
+                _ = await LvrMessageDialog.ShowAsync();
+            }
         }
 
         // Boton de Salida
@@ -165,25 +173,25 @@ namespace DressOfShadows
                 case "AES":
                     ChBoxAES.IsChecked = true;
                     ChBoxBlowFish.IsChecked = false;
-                    ChBoxElGamal.IsChecked = false;
+                    ChBoxRijndael.IsChecked = false;
                     ChBoxTwoFish.IsChecked = false;
                     break;
                 case "BlowFish":
                     ChBoxAES.IsChecked = false;
                     ChBoxBlowFish.IsChecked = true;
-                    ChBoxElGamal.IsChecked = false;
+                    ChBoxRijndael.IsChecked = false;
                     ChBoxTwoFish.IsChecked = false;
                     break;
-                case "ElGamal":
+                case "Rijndael":
                     ChBoxAES.IsChecked = false;
                     ChBoxBlowFish.IsChecked = false;
-                    ChBoxElGamal.IsChecked = true;
+                    ChBoxRijndael.IsChecked = true;
                     ChBoxTwoFish.IsChecked = false;
                     break;
                 case "TwoFish":
                     ChBoxAES.IsChecked = false;
                     ChBoxBlowFish.IsChecked = false;
-                    ChBoxElGamal.IsChecked = false;
+                    ChBoxRijndael.IsChecked = false;
                     ChBoxTwoFish.IsChecked = true;
                     break;
             }

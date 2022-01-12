@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Text;
+using Isopoh.Cryptography.Argon2;
+using Isopoh.Cryptography.SecureArray;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Paddings;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Utilities.Encoders;
@@ -19,10 +22,8 @@ namespace DressOfShadows
 
     public class DressOfShadowsCripto
     {
-        const int KEY128BIT = 16;
-        const int KEY192BIT = 24;
-        const int KEY256BIT = 32;
-        const int KEY448BIT = 56;
+        private const int KEY256BIT = 32;
+        private const int KEY448BIT = 56;
 
         private static readonly Encoding Encoding = Encoding.UTF8;
         public string ErrorDeRetorno { get; set; }
@@ -50,27 +51,7 @@ namespace DressOfShadows
                 return "";
             }
 
-            if (key.Length <= KEY128BIT)
-            {
-                for (int i = key.Length; i < KEY128BIT; i++)
-                {
-                    key += "*";
-                }
-            }
-            else if (key.Length <= KEY192BIT)
-            {
-                for (int i = key.Length; i < KEY192BIT; i++)
-                {
-                    key += "*";
-                }
-            }
-            else if (key.Length <= KEY256BIT)
-            {
-                for (int i = key.Length; i < KEY256BIT; i++)
-                {
-                    key += "*";
-                }
-            }
+            string KeyGenerada = GenerarPassword256(key);
 
             try
             {
@@ -78,7 +59,7 @@ namespace DressOfShadows
 
                 PaddedBufferedBlockCipher cipher = new(engine);
 
-                KeyParameter keyBytes = new(Encoding.GetBytes(key));
+                KeyParameter keyBytes = new(Encoding.GetBytes(KeyGenerada));
 
                 cipher.Init(true, keyBytes);
 
@@ -120,27 +101,7 @@ namespace DressOfShadows
                 return "";
             }
 
-            if (keyString.Length <= KEY128BIT)
-            {
-                for (int i = keyString.Length; i < KEY128BIT; i++)
-                {
-                    keyString += "*";
-                }
-            }
-            else if (keyString.Length <= KEY192BIT)
-            {
-                for (int i = keyString.Length; i < KEY192BIT; i++)
-                {
-                    keyString += "*";
-                }
-            }
-            else if (keyString.Length <= KEY256BIT)
-            {
-                for (int i = keyString.Length; i < KEY256BIT; i++)
-                {
-                    keyString += "*";
-                }
-            }
+            string KeyGenerada = GenerarPassword256(keyString);
 
             AesEngine engine = new();
 
@@ -150,7 +111,7 @@ namespace DressOfShadows
 
             try
             {
-                cipher.Init(false, new KeyParameter(Encoding.GetBytes(keyString)));
+                cipher.Init(false, new KeyParameter(Encoding.GetBytes(KeyGenerada)));
             }
             catch (IndexOutOfRangeException)
             {
@@ -224,6 +185,14 @@ namespace DressOfShadows
                 return "";
             }
 
+            if (key.Length <= KEY448BIT)
+            {
+                for (int i = key.Length; i < KEY448BIT; i++)
+                {
+                    key += "*";
+                }
+            }
+
             try
             {
                 BlowfishEngine engine = new();
@@ -270,7 +239,16 @@ namespace DressOfShadows
                 return "";
             }
 
+            if (keyString.Length <= KEY448BIT)
+            {
+                for (int i = keyString.Length; i < KEY448BIT; i++)
+                {
+                    keyString += "*";
+                }
+            }
+
             BlowfishEngine engine = new();
+
             PaddedBufferedBlockCipher cipher = new(engine);
 
             StringBuilder result = new();
@@ -333,9 +311,9 @@ namespace DressOfShadows
         }
 
         // ************************************************************
-        // Procedimientos ElGamal Encriptar
+        // Procedimientos Rijndael Encriptar
         // ************************************************************
-        public string ElGamalEncrypt(string strValue, string key)
+        public string RijndaelEncrypt(string strValue, string key)
         {
             ErrorDeRetorno = "";
 
@@ -345,13 +323,21 @@ namespace DressOfShadows
                 return "";
             }
 
+            if (key.Length > KEY256BIT)
+            {
+                ErrorDeRetorno = "La clave no puede ser mayor a 32 Caracteres";
+                return "";
+            }
+
+            string KeyGenerada = GenerarPassword256(key);
+
             try
             {
-                ElGamalEngine engine = new();
+                RijndaelEngine engine = new(256);
 
-                BufferedAsymmetricBlockCipher cipher = new(engine);
+                PaddedBufferedBlockCipher cipher = new(engine);
 
-                KeyParameter keyBytes = new(Encoding.GetBytes(key));
+                KeyParameter keyBytes = new(Encoding.GetBytes(KeyGenerada));
 
                 cipher.Init(true, keyBytes);
 
@@ -375,9 +361,9 @@ namespace DressOfShadows
         }
 
         // ************************************************************
-        // Procedimientos ElGamal DesEncriptar
+        // Procedimientos Rijndael DesEncriptar
         // ************************************************************
-        public string ElGamalDecrypt(string name, string keyString)
+        public string RijndaelDecrypt(string name, string keyString)
         {
             ErrorDeRetorno = "";
 
@@ -387,14 +373,23 @@ namespace DressOfShadows
                 return "";
             }
 
-            ElGamalEngine engine = new();
-            BufferedAsymmetricBlockCipher cipher = new(engine);
+            if (keyString.Length > KEY256BIT)
+            {
+                ErrorDeRetorno = "La clave no puede ser mayor a 32 Caracteres";
+                return "";
+            }
+
+            string KeyGenerada = GenerarPassword256(keyString);
+
+            RijndaelEngine engine = new(256);
+
+            PaddedBufferedBlockCipher cipher = new(engine);
 
             StringBuilder result = new();
 
             try
             {
-                cipher.Init(false, new KeyParameter(Encoding.GetBytes(keyString)));
+                cipher.Init(false, new KeyParameter(Encoding.GetBytes(KeyGenerada)));
             }
             catch (IndexOutOfRangeException)
             {
@@ -462,13 +457,21 @@ namespace DressOfShadows
                 return "";
             }
 
+            if (key.Length > KEY256BIT)
+            {
+                ErrorDeRetorno = "La clave no puede ser mayor a 32 Caracteres";
+                return "";
+            }
+
+            string KeyGenerada = GenerarPassword256(key);
+
             try
             {
                 TwofishEngine engine = new();
 
                 PaddedBufferedBlockCipher cipher = new(engine);
 
-                KeyParameter keyBytes = new(Encoding.GetBytes(key));
+                KeyParameter keyBytes = new(Encoding.GetBytes(KeyGenerada));
 
                 cipher.Init(true, keyBytes);
 
@@ -502,6 +505,14 @@ namespace DressOfShadows
                 return "";
             }
 
+            if (keyString.Length > KEY256BIT)
+            {
+                ErrorDeRetorno = "La clave no puede ser mayor a 32 Caracteres";
+                return "";
+            }
+
+            string KeyGenerada = GenerarPassword256(keyString);
+
             TwofishEngine engine = new();
 
             PaddedBufferedBlockCipher cipher = new(engine);
@@ -510,7 +521,7 @@ namespace DressOfShadows
 
             try
             {
-                cipher.Init(false, new KeyParameter(Encoding.GetBytes(keyString)));
+                cipher.Init(false, new KeyParameter(Encoding.GetBytes(KeyGenerada)));
             }
             catch (IndexOutOfRangeException)
             {
@@ -536,7 +547,7 @@ namespace DressOfShadows
 
             try
             {
-                cipher.DoFinal(out2, len2); //Pad block corrupted error happens here
+                _ = cipher.DoFinal(out2, len2); //Pad block corrupted error happens here
             }
             catch (DataLengthException)
             {
@@ -577,6 +588,39 @@ namespace DressOfShadows
             }
 
             return Encoding.GetString(bytes);
+        }
+
+        private string GenerarPassword256(string pPassword)
+        {
+            char separator = ',';
+            byte[] LvSalt = new byte[8];
+            Argon2Config config = new Argon2Config
+            {
+                Type = Argon2Type.DataIndependentAddressing,
+                Version = Argon2Version.Nineteen,
+                TimeCost = 10,
+                MemoryCost = 32768,
+                Lanes = 5,
+                Threads = Environment.ProcessorCount, // higher than "Lanes" doesn't help (or hurt)
+                Password = Encoding.ASCII.GetBytes(pPassword),
+                Salt = LvSalt, // >= 8 bytes if not null
+                //Secret = secret, // from somewhere
+                //AssociatedData = associatedData, // from somewhere
+                HashLength = 13 // >= 4
+            };
+
+            Argon2 argon2A = new(config);
+
+            string hashString;
+
+            using (SecureArray<byte> hashA = argon2A.Hash())
+            {
+                hashString = config.EncodeString(hashA.Buffer);
+            }
+
+            string[] divisor = hashString.Split(separator);
+
+            return divisor[2].Substring(2);
         }
     }
 }
