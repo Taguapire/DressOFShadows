@@ -8,10 +8,10 @@
 
   <Identity
     Name="21006SQLBiker.DressOfShadows"
-    Publisher="CN=PENTALPHA E.I.R.L."
+    Publisher="CN=F99EFFD5-8698-48D3-9336-BD5411647FFA"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="b99272d9-0ef7-4fb8-a6fd-8cc2c8170021" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="b4b73229-81bb-4ee5-8929-cf9d21432bf4" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>DressOfShadows</DisplayName>

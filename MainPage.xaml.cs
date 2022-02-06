@@ -145,7 +145,7 @@ namespace DressOfShadows
 
         private async void ClickBtnVerQR(object sender, RoutedEventArgs e)
         {
-            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeGenerator qrGenerator = new();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(TextoSalida, QRCodeGenerator.ECCLevel.Q);
             PngByteQRCode qrCode = new(qrCodeData);
 
@@ -153,7 +153,7 @@ namespace DressOfShadows
 
             InMemoryRandomAccessStream stream = new();
 
-            DataWriter writer = new DataWriter(stream.GetOutputStreamAt(0));
+            DataWriter writer = new(stream.GetOutputStreamAt(0));
             writer.WriteBytes(qrCodeAsPngByteArr);
             await writer.StoreAsync();
             var image = new BitmapImage();
