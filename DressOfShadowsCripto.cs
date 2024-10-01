@@ -5,6 +5,7 @@ using Isopoh.Cryptography.SecureArray;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Generators;
+using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Paddings;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Utilities.Encoders;
@@ -27,9 +28,12 @@ namespace DressOfShadows
 
         private static readonly Encoding Encoding = Encoding.UTF8;
         public string ErrorDeRetorno { get; set; }
+        private MensajesDoS XMensajesDos = new();
+        private Herramientas VarHerramientas = new();
 
         public DressOfShadowsCripto()
         {
+            VarHerramientas.BuscarIdioma();
         }
 
         // ************************************************************
@@ -41,13 +45,13 @@ namespace DressOfShadows
 
             if (strValue == "" || key == "")
             {
-                ErrorDeRetorno = "Los datos ingresados estan incompletos";
+                ErrorDeRetorno = XMensajesDos.GetMensaje1(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
             if (key.Length > KEY256BIT)
             {
-                ErrorDeRetorno = "La clave no puede ser mayor a 32 Caracteres";
+                ErrorDeRetorno = XMensajesDos.GetMensaje2(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -57,7 +61,7 @@ namespace DressOfShadows
             {
                 AesEngine engine = new();
 
-                PaddedBufferedBlockCipher cipher = new(engine);
+                PaddedBufferedBlockCipher cipher = new(new CbcBlockCipher(engine), new Pkcs7Padding());
 
                 KeyParameter keyBytes = new(Encoding.GetBytes(KeyGenerada));
 
@@ -77,7 +81,7 @@ namespace DressOfShadows
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                ErrorDeRetorno = "Los datos ingresados estan incorrectos";
+                ErrorDeRetorno = XMensajesDos.GetMensaje3(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
         }
@@ -91,13 +95,13 @@ namespace DressOfShadows
 
             if (name == "" || keyString == "")
             {
-                ErrorDeRetorno = "Los datos ingresados estan incompletos";
+                ErrorDeRetorno = XMensajesDos.GetMensaje1(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
             if (keyString.Length > KEY256BIT)
             {
-                ErrorDeRetorno = "La clave no puede ser mayor a 32 Caracteres";
+                ErrorDeRetorno = XMensajesDos.GetMensaje2(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -105,7 +109,7 @@ namespace DressOfShadows
 
             AesEngine engine = new();
 
-            PaddedBufferedBlockCipher cipher = new(engine);
+            PaddedBufferedBlockCipher cipher = new (new CbcBlockCipher(engine), new Pkcs7Padding());
 
             StringBuilder result = new();
 
@@ -115,7 +119,7 @@ namespace DressOfShadows
             }
             catch (IndexOutOfRangeException)
             {
-                ErrorDeRetorno = "Ingrese los datos a decodificar correctamente";
+                ErrorDeRetorno = XMensajesDos.GetMensaje4(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -125,9 +129,14 @@ namespace DressOfShadows
             {
                 out1 = Hex.Decode(name);
             }
+            catch (IndexOutOfRangeException)
+            {
+                ErrorDeRetorno = XMensajesDos.GetMensaje9(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
+                return "";
+            }
             catch (System.IO.IOException)
             {
-                ErrorDeRetorno = "Los datos ingresados a decodificar no tienen el formato correcto.";
+                ErrorDeRetorno = XMensajesDos.GetMensaje5(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -141,12 +150,12 @@ namespace DressOfShadows
             }
             catch (DataLengthException)
             {
-                ErrorDeRetorno = "Los datos ingresados a decodificar no concuerdan con la clave";
+                ErrorDeRetorno = XMensajesDos.GetMensaje6(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
             catch (InvalidCipherTextException)
             {
-                ErrorDeRetorno = "Los datos ingresados a decodificar no concuerdan con la clave";
+                ErrorDeRetorno = XMensajesDos.GetMensaje6(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -175,13 +184,13 @@ namespace DressOfShadows
 
             if (strValue == "" || key == "")
             {
-                ErrorDeRetorno = "Los datos ingresados estan incompletos";
+                ErrorDeRetorno = XMensajesDos.GetMensaje1(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
             if (key.Length > KEY448BIT)
             {
-                ErrorDeRetorno = "La clave no puede ser mayor a 56 Caracteres";
+                ErrorDeRetorno = XMensajesDos.GetMensaje7(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -191,7 +200,7 @@ namespace DressOfShadows
             {
                 BlowfishEngine engine = new();
 
-                PaddedBufferedBlockCipher cipher = new(engine);
+                PaddedBufferedBlockCipher cipher = new(new CbcBlockCipher(engine), new Pkcs7Padding());
 
                 KeyParameter keyBytes = new(Encoding.GetBytes(KeyGenerada));
 
@@ -209,7 +218,7 @@ namespace DressOfShadows
             }
             catch (Exception)
             {
-                ErrorDeRetorno = "Los datos ingresados estan incorrectos";
+                ErrorDeRetorno = XMensajesDos.GetMensaje3(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
         }
@@ -223,13 +232,13 @@ namespace DressOfShadows
 
             if (name == "" || keyString == "")
             {
-                ErrorDeRetorno = "Los datos ingresados estan incompletos";
+                ErrorDeRetorno = XMensajesDos.GetMensaje1(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
             if (keyString.Length > KEY448BIT)
             {
-                ErrorDeRetorno = "La clave no puede ser mayor a 56 Caracteres";
+                ErrorDeRetorno = XMensajesDos.GetMensaje7(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -237,7 +246,7 @@ namespace DressOfShadows
 
             BlowfishEngine engine = new();
 
-            PaddedBufferedBlockCipher cipher = new(engine);
+            PaddedBufferedBlockCipher cipher = new(new CbcBlockCipher(engine), new Pkcs7Padding());
 
             StringBuilder result = new();
 
@@ -247,7 +256,7 @@ namespace DressOfShadows
             }
             catch (IndexOutOfRangeException)
             {
-                ErrorDeRetorno = "Ingrese los datos a decodificar correctamente";
+                ErrorDeRetorno = XMensajesDos.GetMensaje4(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -257,11 +266,17 @@ namespace DressOfShadows
             {
                 out1 = Hex.Decode(name);
             }
-            catch (System.IO.IOException)
+            catch (IndexOutOfRangeException)
             {
-                ErrorDeRetorno = "Los datos ingresados a decodificar no tienen el formato correcto.";
+                ErrorDeRetorno = XMensajesDos.GetMensaje9(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
+            catch (System.IO.IOException)
+            {
+                ErrorDeRetorno = XMensajesDos.GetMensaje5(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
+                return "";
+            }
+            
 
             byte[] out2 = new byte[cipher.GetOutputSize(out1.Length)];
 
@@ -273,12 +288,12 @@ namespace DressOfShadows
             }
             catch (DataLengthException)
             {
-                ErrorDeRetorno = "Los datos ingresados a decodificar no concuerdan con la clave";
+                ErrorDeRetorno = XMensajesDos.GetMensaje6(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
             catch (InvalidCipherTextException)
             {
-                ErrorDeRetorno = "Los datos ingresados a decodificar no concuerdan con la clave";
+                ErrorDeRetorno = XMensajesDos.GetMensaje6(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -307,13 +322,13 @@ namespace DressOfShadows
 
             if (strValue == "" || key == "")
             {
-                ErrorDeRetorno = "Los datos ingresados estan incompletos";
+                ErrorDeRetorno = XMensajesDos.GetMensaje1(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
             if (key.Length > KEY256BIT)
             {
-                ErrorDeRetorno = "La clave no puede ser mayor a 32 Caracteres";
+                ErrorDeRetorno = XMensajesDos.GetMensaje2(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -323,7 +338,7 @@ namespace DressOfShadows
             {
                 RijndaelEngine engine = new(256);
 
-                PaddedBufferedBlockCipher cipher = new(engine);
+                PaddedBufferedBlockCipher cipher = new(new CbcBlockCipher(engine), new Pkcs7Padding());
 
                 KeyParameter keyBytes = new(Encoding.GetBytes(KeyGenerada));
 
@@ -343,7 +358,7 @@ namespace DressOfShadows
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                ErrorDeRetorno = "Los datos ingresados estan incorrectos";
+                ErrorDeRetorno = XMensajesDos.GetMensaje3(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
         }
@@ -357,13 +372,13 @@ namespace DressOfShadows
 
             if (name == "" || keyString == "")
             {
-                ErrorDeRetorno = "Los datos ingresados estan incompletos";
+                ErrorDeRetorno = XMensajesDos.GetMensaje1(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
             if (keyString.Length > KEY256BIT)
             {
-                ErrorDeRetorno = "La clave no puede ser mayor a 32 Caracteres";
+                ErrorDeRetorno = XMensajesDos.GetMensaje2(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -371,7 +386,7 @@ namespace DressOfShadows
 
             RijndaelEngine engine = new(256);
 
-            PaddedBufferedBlockCipher cipher = new(engine);
+            PaddedBufferedBlockCipher cipher = new(new CbcBlockCipher(engine), new Pkcs7Padding());
 
             StringBuilder result = new();
 
@@ -381,7 +396,7 @@ namespace DressOfShadows
             }
             catch (IndexOutOfRangeException)
             {
-                ErrorDeRetorno = "Ingrese los datos a decodificar correctamente";
+                ErrorDeRetorno = XMensajesDos.GetMensaje4(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -391,9 +406,14 @@ namespace DressOfShadows
             {
                 out1 = Hex.Decode(name);
             }
+            catch (IndexOutOfRangeException)
+            {
+                ErrorDeRetorno = XMensajesDos.GetMensaje9(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
+                return "";
+            }
             catch (System.IO.IOException)
             {
-                ErrorDeRetorno = "Los datos ingresados a decodificar no tienen el formato correcto.";
+                ErrorDeRetorno = XMensajesDos.GetMensaje5(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -407,12 +427,12 @@ namespace DressOfShadows
             }
             catch (DataLengthException)
             {
-                ErrorDeRetorno = "Los datos ingresados a decodificar no concuerdan con la clave";
+                ErrorDeRetorno = XMensajesDos.GetMensaje6(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
             catch (InvalidCipherTextException)
             {
-                ErrorDeRetorno = "Los datos ingresados a decodificar no concuerdan con la clave";
+                ErrorDeRetorno = XMensajesDos.GetMensaje6(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -441,13 +461,13 @@ namespace DressOfShadows
 
             if (strValue == "" || key == "")
             {
-                ErrorDeRetorno = "Los datos ingresados estan incompletos";
+                ErrorDeRetorno = XMensajesDos.GetMensaje1(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
             if (key.Length > KEY256BIT)
             {
-                ErrorDeRetorno = "La clave no puede ser mayor a 32 Caracteres";
+                ErrorDeRetorno = XMensajesDos.GetMensaje2(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -457,7 +477,7 @@ namespace DressOfShadows
             {
                 TwofishEngine engine = new();
 
-                PaddedBufferedBlockCipher cipher = new(engine);
+                PaddedBufferedBlockCipher cipher = new(new CbcBlockCipher(engine), new Pkcs7Padding());
 
                 KeyParameter keyBytes = new(Encoding.GetBytes(KeyGenerada));
 
@@ -475,7 +495,7 @@ namespace DressOfShadows
             }
             catch (Exception)
             {
-                ErrorDeRetorno = "Los datos ingresados estan incorrectos";
+                ErrorDeRetorno = XMensajesDos.GetMensaje3(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
         }
@@ -489,13 +509,13 @@ namespace DressOfShadows
 
             if (name == "" || keyString == "")
             {
-                ErrorDeRetorno = "Los datos ingresados estan incompletos";
+                ErrorDeRetorno = XMensajesDos.GetMensaje1(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
             if (keyString.Length > KEY256BIT)
             {
-                ErrorDeRetorno = "La clave no puede ser mayor a 32 Caracteres";
+                ErrorDeRetorno = XMensajesDos.GetMensaje2(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -503,7 +523,7 @@ namespace DressOfShadows
 
             TwofishEngine engine = new();
 
-            PaddedBufferedBlockCipher cipher = new(engine);
+            PaddedBufferedBlockCipher cipher = new(new CbcBlockCipher(engine), new Pkcs7Padding());
 
             StringBuilder result = new();
 
@@ -513,7 +533,7 @@ namespace DressOfShadows
             }
             catch (IndexOutOfRangeException)
             {
-                ErrorDeRetorno = "Ingrese los datos a decodificar correctamente";
+                ErrorDeRetorno = XMensajesDos.GetMensaje4(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -523,9 +543,14 @@ namespace DressOfShadows
             {
                 out1 = Hex.Decode(name);
             }
+            catch (IndexOutOfRangeException)
+            {
+                ErrorDeRetorno = XMensajesDos.GetMensaje9(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
+                return "";
+            }
             catch (System.IO.IOException)
             {
-                ErrorDeRetorno = "Los datos ingresados a decodificar no tienen el formato correcto.";
+                ErrorDeRetorno = XMensajesDos.GetMensaje5(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 
@@ -539,12 +564,12 @@ namespace DressOfShadows
             }
             catch (DataLengthException)
             {
-                ErrorDeRetorno = "Los datos ingresados a decodificar no concuerdan con la clave";
+                ErrorDeRetorno = XMensajesDos.GetMensaje6(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
             catch (InvalidCipherTextException)
             {
-                ErrorDeRetorno = "Los datos ingresados a decodificar no concuerdan con la clave";
+                ErrorDeRetorno = XMensajesDos.GetMensaje6(VarHerramientas.GetIdiomaTwoLetterISOLanguageName());
                 return "";
             }
 

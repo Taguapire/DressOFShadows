@@ -21,10 +21,17 @@ namespace DressOfShadows
         private string TextoEntrada = "";
         private string TextoSalida = "";
         private DressOfShadowsCripto OperacionCripto;
+        private Herramientas VarHerramientas = new();
+        private ApplicationView AplicacionPrincipal;
+        private MensajesDoS XMensajesDos = new();
 
         public MainPage()
         {
             InitializeComponent();
+            AplicacionPrincipal = ApplicationView.GetForCurrentView();
+            //AplicacionPrincipal.Title = "Dress Of Shadows";
+            VarHerramientas.BuscarIdioma();
+            EstablecerTextoControles();
             ApplicationView.PreferredLaunchViewSize = new Size(720, 510);
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
         }
@@ -76,7 +83,7 @@ namespace DressOfShadows
             }
             else
             {
-                MessageDialog LvrMessageDialog = new("Debe escojer una función criptográfica.");
+                MessageDialog LvrMessageDialog = new(XMensajesDos.GetMensaje8(VarHerramientas.GetIdiomaTwoLetterISOLanguageName()));
                 _ = await LvrMessageDialog.ShowAsync();
                 return;
             }
@@ -121,7 +128,7 @@ namespace DressOfShadows
             }
             else
             {
-                MessageDialog LvrMessageDialog = new("Debe escojer una función criptográfica.");
+                MessageDialog LvrMessageDialog = new(XMensajesDos.GetMensaje8(VarHerramientas.GetIdiomaTwoLetterISOLanguageName()));
                 _ = await LvrMessageDialog.ShowAsync();
                 return;
             }
@@ -194,6 +201,31 @@ namespace DressOfShadows
                     ChBoxRijndael.IsChecked = false;
                     ChBoxTwoFish.IsChecked = true;
                     break;
+            }
+        }
+        private void EstablecerTextoControles()
+        {
+            if (VarHerramientas.GetIdiomaTwoLetterISOLanguageName() == "es")
+            {
+                TBoxMensajeEntrada.Header = "Mensaje Normal";
+                TBoxMensajeSalida.Header = "Mensaje Encriptado";
+                BtnEncriptar.Content = "Encriptar";
+                BtnDesencriptar.Content = "Desencriptar";
+                BtnSalir.Content = "Salida";
+                TBoxClaveEntrada.Header = "Ingrese Clave para Encriptar";
+                BtnVerPassword.Content = "Mostrar";
+                BtnVerQR.Content = "Mostrar QR";
+            }
+            else
+            {
+                TBoxMensajeEntrada.Header = "Normal message";
+                TBoxMensajeSalida.Header = "Encrypted Message";
+                BtnEncriptar.Content = "Encrypt";
+                BtnDesencriptar.Content = "Decrypt";
+                BtnSalir.Content = "Exit";
+                TBoxClaveEntrada.Header = "Enter Key to Encrypt";
+                BtnVerPassword.Content = "Show";
+                BtnVerQR.Content = "Show QR";
             }
         }
     }
