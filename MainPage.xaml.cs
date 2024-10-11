@@ -1,5 +1,6 @@
 ﻿using QRCoder;
 using System;
+using System.ComponentModel.DataAnnotations;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI.Popups;
@@ -227,6 +228,17 @@ namespace DressOfShadows
                 BtnVerPassword.Content = "Show";
                 BtnVerQR.Content = "Show QR";
             }
+        }
+
+        private void BtnInfoLV_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            MessageDialog LvrClatoxDialog = new("eMail:\n<clatox@protonmail.com>\nTox Id:\n4A586735803290E64920EAD7E91D2952C36817C294142E8BEDFDC367C0EF1F2CC7AC65446385");
+            _ = LvrClatoxDialog.ShowAsync();
         }
     }
 }

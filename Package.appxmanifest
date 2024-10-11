@@ -8,10 +8,10 @@
 
   <Identity
     Name="21006SQLBiker.DressOfShadows"
-    Publisher="CN=PENTALPHA E.I.R.L."
-    Version="1.0.1.0" />
+    Publisher="CN=F99EFFD5-8698-48D3-9336-BD5411647FFA"
+    Version="1.0.3.0" />
 
-  <mp:PhoneIdentity PhoneProductId="b4b73229-81bb-4ee5-8929-cf9d21432bf4" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="b161c561-b9f1-49cc-992b-ce9125066b7d" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>DressOfShadows</DisplayName>
@@ -32,10 +32,10 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="DressOfShadows.App">
       <uap:VisualElements
-        DisplayName="Dress Of Shadows"
+        DisplayName="DressOfShadows"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="Dress Of Shadows, Sistema de Encriptacion y Desencriptación Basado en BlowFish"
+        Description="Dress Of Shadows - Text Encryption Application."
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
