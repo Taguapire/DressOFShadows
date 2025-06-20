@@ -22,8 +22,7 @@ Una vista previa de *DressOfShadows* en acción:
 
 En un mundo donde los datos circulan con descuido, *DressOfShadows* plantea una defensa sencilla: envolver la información en un manto matemático, como si cada mensaje ocultara una intención.
 
-El uso de las Bouncy Castle y C# generan una buena compatibilidad https://www.bouncycastle.org
-[![Bouncy Castle](https://www.bouncycastle.org)
+La integración de [BouncyCastle](https://www.bouncycastle.org) con C# ofrece una solución criptográfica robusta y altamente compatible.
 
 Inspirado por el espíritu narrativo de *Stephenson* y *Gibson*, esta app cifra no solo texto, sino también contexto.
 
