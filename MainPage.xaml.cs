@@ -237,7 +237,7 @@ namespace DressOfShadows
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            MessageDialog LvrClatoxDialog = new("eMail:\n<clatox@protonmail.com>\nTox Id:\n4A586735803290E64920EAD7E91D2952C36817C294142E8BEDFDC367C0EF1F2CC7AC65446385");
+            MessageDialog LvrClatoxDialog = new("Creado Por:\n<Luis Vasquez Consultores\neMail:\nljvasquezr@outlook.com");
             _ = LvrClatoxDialog.ShowAsync();
         }
     }
