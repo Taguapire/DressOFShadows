@@ -1,7 +1,5 @@
 # DressOfShadows 🕶️🔐
 
-*Una app que cifra palabras como si fueran secretos entre sombras.*
-
 **DressOfShadows** es una aplicación desarrollada en **C#** utilizando **UWP (Universal Windows Platform)**. Fue concebida como una prueba de concepto para explorar el proceso de publicación en la **Microsoft Store**, pero terminó consolidándose como una herramienta minimalista y efectiva de criptografía aplicada.
 
 ## ✨ Características principales
@@ -22,7 +20,10 @@ Una vista previa de *DressOfShadows* en acción:
 
 ## 🧠 Motivación
 
-En un mundo donde los datos circulan con descuido, *DressOfShadows* plantea una defensa elegante: envolver la información en un manto matemático, como si cada mensaje ocultara una intención.
+En un mundo donde los datos circulan con descuido, *DressOfShadows* plantea una defensa sencilla: envolver la información en un manto matemático, como si cada mensaje ocultara una intención.
+
+El uso de las Bouncy Castle y C# generan una buena compatibilidad https://www.bouncycastle.org
+[![Bouncy Castle](https://www.bouncycastle.org)
 
 Inspirado por el espíritu narrativo de *Stephenson* y *Gibson*, esta app cifra no solo texto, sino también contexto.
 
